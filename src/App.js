@@ -4,6 +4,8 @@ import './App.css';
 function App() {
   const [task, setTask] = useState('');
   const [todos, setTodos] = useState([]);
+  const [editId, setEditId] = useState(null);
+  const [editText, setEditText] = useState('');
 
   const handleAdd = () => {
     if (task.trim() === '') {
@@ -27,6 +29,20 @@ function App() {
     setTodos(updatedTodos);
   };
 
+  const handleEdit = (id, text) => {
+    setEditId(id);
+    setEditText(text);
+  };
+
+  const handleSave = (id) => {
+    const updatedTodos = todos.map(todo =>
+      todo.id === id ? { ...todo, text: editText } : todo
+    );
+    setTodos(updatedTodos);
+    setEditId(null);
+    setEditText('');
+  };
+
   return (
     <div className="container">
       <h1>📝 My To-Do App</h1>
@@ -48,7 +64,22 @@ function App() {
               checked={todo.completed}
               onChange={() => toggleComplete(todo.id)}
             />
-            {todo.text}
+
+            {editId === todo.id ? (
+              <>
+                <input
+                  type="text"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                />
+                <button onClick={() => handleSave(todo.id)}>Save</button>
+              </>
+            ) : (
+              <>
+                <span>{todo.text}</span>
+                <button onClick={() => handleEdit(todo.id, todo.text)}>Edit</button>
+              </>
+            )}
           </li>
         ))}
       </ul>
@@ -57,4 +88,3 @@ function App() {
 }
 
 export default App;
-
